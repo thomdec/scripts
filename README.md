@@ -1,4 +1,4 @@
-# Scripts for evolutionary genomics
+# Scripts for population genomics
 
 ## Get high 
 
