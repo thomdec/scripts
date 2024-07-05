@@ -18,7 +18,7 @@ Arguments:
 
 Output:
 
-    - A tsv file with chromosome, position, \[population,] total number of alleles, number of "high impact" alleles, effect of the "high impact" allele (eg. stop_gained, start_lost, splice_donor_variant...)
+    - A tsv file with chromosome, position, [population,] total number of alleles, number of "high impact" alleles, effect of the "high impact" allele (eg. stop_gained, start_lost, splice_donor_variant...)
 
 
 ### Example command
