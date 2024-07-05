@@ -63,14 +63,14 @@ def main():
         pop_df = pd.read_csv(args.pop, names=["id", "pop"])
         vcf_header = allel.read_vcf_headers(args.vcf)
 
+        if not np.all(np.isin(vcf_header.samples, pop_df.id)):
+            raise Exception('[YAWP] ERROR: Samples in the population file could not be found in the VCF')
+
         pops = {}
         unique_pops = np.unique(pop_df["pop"]).astype(str)
         for pop in unique_pops:
             ids = pop_df[pop_df['pop'] == pop]['id']
             pops[pop] = np.where(np.isin(vcf_header.samples, ids))[0]
-
-        if not np.all(np.isin(vcf_header.samples, pop_df.id)):
-            raise Exception('[YAWP] ERROR: Samples in the population file could not be found in the VCF')
 
         output_file.write('chr' + '\t' + 'pos' + '\t' + 'pop' + '\t' +  'n_alleles' + '\t' +  'n_high_alleles' + '\t' +  'effect' + '\n')
 
