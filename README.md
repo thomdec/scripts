@@ -12,9 +12,8 @@ Arguments:
         - A VCF annotated with [SNPEff](https://pcingola.github.io/SnpEff/)
         - The output name
     - Optional:
-        - Region string as per bcftools: chr|chr:pos|chr:beg-end
+        - Region string as per bcftools: chr|chr:pos|chr:beg-end (vcfs need to be indexed with tabix or bcftools)
         - Population file (Csv with id and population)
-
 
 Output:
 
@@ -40,7 +39,7 @@ Arguments:
         - The output prefix
     - Optional:
         - Number of components [Default = 5]
-        - Region string: chr|chr:pos|chr:beg-end
+        - Region string: chr|chr:pos|chr:beg-end (works best with vcfs indexed with tabix or bcftools)
         - Sample file (newline separated samples)
 
 Output:

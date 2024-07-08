@@ -26,7 +26,7 @@ def main():
 
     required.add_argument('-v', '--vcf', type=str, help='VCF file', required=True)
     required.add_argument('-o', '--output', type=str, help='Output name', required=True)
-    optional.add_argument('-r', '--region', type=str, help='Region string as per bcftools: chr|chr:pos|chr:beg-end', required=False)
+    optional.add_argument('-r', '--region', type=str, help='Region string as per bcftools: chr|chr:pos|chr:beg-end (VCF needs to be indexed)', required=False)
     optional.add_argument('-p', '--pop', type=str, help='Populations file.\nCsv file with id and population in each row: [id,pop]', required=False)
 
     args = parser.parse_args()
@@ -43,7 +43,12 @@ def main():
     tmp_vcf = "tmp.variant." + uuid4().hex + ".gz"
 
     if args.region is not None:
+
+        if not os.path.exists(args.vcf + ".csi") | os.path.exists(args.vcf + ".tbi"): 
+            raise Exception('[GET HIGH] ERROR: The vcf is not indexed. The vcf can be indexed with "bcftools index" or "tabix -p vcf"') 
+        
         run_command(f"""bcftools filter -r {args.region} -e 'N_ALT == 0' {args.vcf} -Oz -o {tmp_vcf}""")
+    
     else:
         run_command(f"""bcftools filter -e 'N_ALT == 0' {args.vcf} -Oz -o {tmp_vcf}""")
 
