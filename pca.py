@@ -3,7 +3,7 @@ import numpy as np
 import pandas as pd
 import argparse
 from warnings import filterwarnings
-from os import path
+import os
 
 def main():
 
@@ -24,16 +24,23 @@ def main():
 
     args = parser.parse_args()
 
+    # checks
+    if os.path.exists(args.vcf) is not True:
+        raise Exception('ERROR: The specified VCF ' + str(args.vcf) + ' does not exist') 
+
+    if os.access(os.path.dirname("./" + args.output), os.W_OK) is not True:
+        raise Exception(f"ERROR: Cannot write output to {args.output}.coords.csv")
+
     # parse optional arguments
     if args.samples is not None:
-        if path.exists(args.samples) is not True:
-            raise Exception('ERROR: The specified populations file ' + str(args.samples) + ' does not exist')
+        if os.path.exists(args.samples) is not True:
+            raise Exception('ERROR: The specified samples file ' + str(args.samples) + ' does not exist')
 
         sample_df = pd.read_csv(args.samples, names=["id"])
         vcf_header = allel.read_vcf_headers(args.vcf)
 
         if not np.all(np.isin(sample_df.id, vcf_header.samples)):
-            raise Exception('ERROR: Samples in the population file could not be found in the VCF')
+            raise Exception(f"ERROR: The following sample could not be found in the VCF:\n{", ".join(sample_df.id[~np.isin(sample_df.id, vcf_header.samples)])}")
         
         sample_string = sample_string = list(sample_df.id)
 
@@ -46,7 +53,6 @@ def main():
     callset = allel.read_vcf(args.vcf,  fields=['calldata/GT', 'samples'], samples=sample_string, region=region_string)
     g = allel.GenotypeArray(allel.GenotypeDaskArray(callset['calldata/GT'])) # genotype array
     samples = callset['samples']
-
 
     # filter out singletons and multi-allelic sites
     ac = g.count_alleles()

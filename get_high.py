@@ -7,7 +7,7 @@ import sys
 import subprocess
 from uuid import uuid4
 from warnings import filterwarnings
-from os import path
+import os
 
 #TO DO
 #   - Read the VCF chunk by chunk, rather than reading in the entire genotype matrix at once
@@ -32,8 +32,11 @@ def main():
     args = parser.parse_args()
 
     # checks
-    if path.exists(args.vcf) is not True:
-        raise Exception('[YAWP] ERROR: The specified VCF ' + str(args.vcf) + ' does not exist') 
+    if os.path.exists(args.vcf) is not True:
+        raise Exception('[GET HIGH] ERROR: The specified VCF ' + str(args.vcf) + ' does not exist') 
+    
+    if os.access(os.path.dirname("./" + args.output), os.W_OK) is not True:
+        raise Exception(f"[GET HIGH] ERROR: Cannot write output to {args.output}")
 
     # remove invariant sites
     print("\n[GET HIGH]: Removing invariant sites")
@@ -57,14 +60,14 @@ def main():
     if args.output: output_file = gzip.open(args.output, "wt") if args.output.endswith(".gz") else open(args.output, "wt")
 
     if args.pop is not None:
-        if path.exists(args.pop) is not True:
-            raise Exception('[YAWP] ERROR: The specified populations file ' + str(args.pop) + ' does not exist')
+        if os.path.exists(args.pop) is not True:
+            raise Exception('[GET HIGH] ERROR: The specified populations file ' + str(args.pop) + ' does not exist')
 
         pop_df = pd.read_csv(args.pop, names=["id", "pop"])
         vcf_header = allel.read_vcf_headers(args.vcf)
 
-        if not np.all(np.isin(vcf_header.samples, pop_df.id)):
-            raise Exception('[YAWP] ERROR: Samples in the population file could not be found in the VCF')
+        if not np.all(np.isin(pop_df.id, vcf_header.samples)):
+            raise Exception(f"[GET HIGH] ERROR: The following sample in the population file could not be found in the VCF:\n{", ".join(pop_df.id[~np.isin(pop_df.id, vcf_header.samples)])}")
 
         pops = {}
         unique_pops = np.unique(pop_df["pop"]).astype(str)
