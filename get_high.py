@@ -72,7 +72,7 @@ def main():
         vcf_header = allel.read_vcf_headers(args.vcf)
 
         if not np.all(np.isin(pop_df.id, vcf_header.samples)):
-            raise Exception(f"[GET HIGH] ERROR: The following sample in the population file could not be found in the VCF:\n{", ".join(pop_df.id[~np.isin(pop_df.id, vcf_header.samples)])}")
+            raise Exception(f"[GET HIGH] ERROR: The following sample in the population file could not be found in the VCF:\n{', '.join(pop_df.id[~np.isin(pop_df.id, vcf_header.samples)])}")
 
         pops = {}
         unique_pops = np.unique(pop_df["pop"]).astype(str)

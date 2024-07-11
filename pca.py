@@ -40,7 +40,7 @@ def main():
         vcf_header = allel.read_vcf_headers(args.vcf)
 
         if not np.all(np.isin(sample_df.id, vcf_header.samples)):
-            raise Exception(f"ERROR: The following sample could not be found in the VCF:\n{", ".join(sample_df.id[~np.isin(sample_df.id, vcf_header.samples)])}")
+            raise Exception(f"ERROR: The following sample could not be found in the VCF:\n{', '.join(sample_df.id[~np.isin(sample_df.id, vcf_header.samples)])}")
         
         sample_string = sample_string = list(sample_df.id)
 
