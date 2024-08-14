@@ -1,5 +1,34 @@
 # Scripts for population genomics
 
+## Yayawp
+
+The script `yayawp.py` computes $\pi$ and $d_{xy}$ in windows or globally from an all-site VCF. It takes advantage of cyvcf2 to read a vcf site per site. As a result it is relatively slow, but takes up basicallly no RAM (it can be used to compute global estimates without causing memory issues, even on laptops).
+
+Dependencies: python>=3.10, numpy and [cyvcf2](https://github.com/brentp/cyvcf2)
+
+Arguments: 
+
+    - Required:
+        - An indexed all-site VCF
+        - Population file (csv with id and population)
+        - The output prefix
+    - Optional:
+        - Window size
+
+Output:
+
+    - a .pi.tsv with: [chromosome, start, end,] pop, pi, n_diff, n_comp
+    - a .dxy.tsv with: [chromosome, start, end,] pop1, pop2, dxy, n_diff, n_comp
+
+
+### Example command
+
+```bash
+python yayawp.py -v vcf.gz -p pops.csv -o global.tsv
+
+python yayawp.py -v vcf.gz -p pops.csv -w 500_000 -o windows.tsv
+```
+
 ## Get high 
 
 The script `get_high.py` extracts the allele frequency and effect of so-called "HIGH impact variants" from a VCF annotated with SNPEff. 
@@ -13,7 +42,7 @@ Arguments:
         - The output name
     - Optional:
         - Region string as per bcftools: chr|chr:pos|chr:beg-end (vcfs need to be indexed with tabix or bcftools)
-        - Population file (Csv with id and population)
+        - Population file (csv with id and population)
 
 Output:
 
